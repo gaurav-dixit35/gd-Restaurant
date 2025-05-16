@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GD's Restaurant - Menu</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      animation: fadeInUp 0.5s ease-in-out;
+      backdrop-filter: blur(6px);
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .menu-image {
+      max-width: 120px;
+      max-height: 120px;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: url('assets/images/about-banner.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+      }
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 20px;
+      background-color: rgba(209, 65, 30, 0.95);
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      background: white;
+      color: #d1411e;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .back-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgb(255, 255, 1);
+    }
+    .menu-container {
+      display: flex;
+      padding: 13px;
+      background: rgba(0, 0, 0, 0.7);
+      margin: 20px;
+      border-radius: 16px;
+    }
+    .menu-list {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .menu-section {
+      margin-bottom: 40px;
+    }
+    .section-title {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--gold-crayola);
+      margin-bottom: 14px;
+      text-shadow: 1px 1px black;
+      border-bottom: 2px solid var(--gold-crayola);
+      padding-bottom: 4px;
+    }
+    
+    .menu-details {
+      max-width: 60%;
+    }
+    .menu-name {
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .menu-price {
+      font-size: 18px;
+      color: #ffd700;
+      margin: 5px 0;
+    }
+    .order-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #ffd700;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .order-btn:hover {
+       transform: scale(1.1);
+      box-shadow: 0 0 15px rgb(255, 255, 1);
+    }
+    .menu-image:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgb(255, 255, 1);
+    }
+    .filter-panel {
+      flex: 1;
+      margin-left: 20px;
+      background: rgba(232, 227, 227, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(249, 247, 247, 0.552);
+      height: fit-content;
+      backdrop-filter: blur(6px);
+    }
+    .filter-panel h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+    .filter-panel select, .filter-panel button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    @keyframes fadeInUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <a href="index.html" class="back-btn">← Back</a>
+  <h1 style="margin: 0 auto;">GD's Restaurant</h1>
+  <button onclick="toggleOrderList()" style="position:absolute; right:20px; background:#fff; color:#d1411e; padding:8px 16px; border-radius:20px; border:none; font-weight:bold; cursor:pointer; ">🍽️ Orders</button>
+</header>
+
+<div class="menu-container">
+    <div class="menu-list" id="menu-list">
+      <!-- Menu items will be inserted here -->
+    </div>
+    <div class="filter-panel">
+      <h3>Category</h3>
+      <select id="categorySelect" style="color: white; background-color: #333;">
+        <option value="All">All</option>
+        <option value="Drink">Drink</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Appetizer">Appetizer</option>
+      </select>
+      <h3>Sort Menu</h3>
+      <select id="sortSelect" style="color: white; background-color: #333;">
+        <option value="">Select</option>
+        <option value="priceHigh">Price High to Low</option>
+        <option value="priceLow">Price Low to High</option>
+        <option value="az">Menu A-Z</option>
+        <option value="za">Menu Z-A</option>
+      </select>
+      <button onclick="applyFilter()" style="color: white;">Apply Filter</button>
+
+    </div>
+  </div>
+
+  <script>
+    const imageMap = {
+     // Drinks
+      'Coffee': 'assets/images/coffee.jpg',
+      'Tea': 'assets/images/Tea.webp',
+      'Orange Juice': 'assets/images/orange_juice.jpg',
+      'Lemonade': 'assets/images/lemonade.webp',
+      'Mojito': 'assets/images/mojito.webp',
+      'Smoothie': 'assets/images/smoothie.jpg',
+      'Iced Coffee': 'assets/images/iced_coffee.jpeg',
+      'Cola': 'assets/images/cola.avif',
+      'Milkshake': 'assets/images/milkshake.avif',
+      'Green Tea': 'assets/images/green_tea.jpg',
+      'Cold Brew': 'assets/images/cold_brew.jpeg',
+      'Coconut Water': 'assets/images/coconut_water.jpeg',
+
+      // Breakfast
+      'Pancakes': 'assets/images/pancake.webp',
+      'Omelette': 'assets/images/omelette.jpeg',
+      'French Toast': 'assets/images/french_toast.jpg',
+      'Paratha': 'assets/images/paratha.avif', 
+      'Idli': 'assets/images/idli.avif', 
+      'Poha': 'assets/images/poha.avif', 
+      'Dosa': 'assets/images/dosa.avif', 
+      'Sandwich': 'assets/images/sandwich.webp', 
+      'Upma': 'assets/images/upma.jpg', 
+      'Chole Bhature': 'assets/images/chole_bhature.jpg', 
+      'Cereal': 'assets/images/cereal.avif', 
+      'Fruit Bowl': 'assets/images/fruit_bowl.jpeg',
+
+      // Appetizers
+      'Spring Rolls': 'assets/images/spring_rolls.jpg',
+      'Garlic Bread': 'assets/images/garlic_bread.jpg',
+      'Samosa': 'assets/images/samosa.avif' ,
+      'Tandoori Wings': 'assets/images/tandoori_wings.png', 
+      'Bruschetta': 'assets/images/bruschetta.jpeg', 
+      'Nachos': 'assets/images/nachos.jpg', 
+      'Cheese Balls': 'assets/images/cheese_balla.jpeg', 
+      'Veg Cutlet': 'assets/images/veg_cutlet.avif' , 
+      'Corn Fritters': 'assets/images/corn_fritter.webp', 
+      'Onion Rings': 'assets/images/onion_rings.avif', 
+      'Paneer Tikka': 'assets/images/paneer_tikka.webp', 
+      'Mini Pizza': 'assets/images/mini_pizza.webp',
+    };
+
+    const drinkNames = Object.keys(imageMap).filter(name => ['Coffee','Tea','Orange Juice','Lemonade','Mojito','Smoothie','Iced Coffee','Cola','Milkshake','Green Tea','Cold Brew','Coconut Water'].includes(name));
+    const breakfastNames = ['Pancakes', 'Omelette', 'French Toast', 'Paratha', 'Idli', 'Poha', 'Dosa', 'Sandwich', 'Upma', 'Chole Bhature', 'Cereal', 'Fruit Bowl'];
+    const appetizerNames = ['Spring Rolls', 'Garlic Bread', 'Samosa', 'Tandoori Wings', 'Bruschetta', 'Nachos', 'Cheese Balls', 'Veg Cutlet', 'Corn Fritters', 'Onion Rings', 'Paneer Tikka', 'Mini Pizza'];
+
+    const menuItems = [
+      ...drinkNames.map((name, i) => ({ name, price: 100 + i * 10, image: imageMap[name] || 'assets/images/menu-drinks.jpg', category: 'Drink' })),
+      ...breakfastNames.map((name, i) => ({ name, price: 150 + i * 15, image: imageMap[name] || 'assets/images/menu-breakfast.jpg', category: 'Breakfast' })),
+      ...appetizerNames.map((name, i) => ({ name, price: 200 + i * 12, image: imageMap[name] || 'assets/images/menu-appetizer.jpg', category: 'Appetizer' }))
+    ];
+
+    function renderMenu(items) {
+      const menuList = document.getElementById('menu-list');
+      menuList.innerHTML = '';
+
+      const sections = ['Drink', 'Breakfast', 'Appetizer'];
+      sections.forEach(section => {
+        const filtered = items.filter(i => i.category === section);
+        if (filtered.length > 0) {
+          menuList.innerHTML += `<div class="menu-section"><div class="section-title">${section}s</div><p style="margin: 10px 0 20px; font-size: 16px; color: #ddd; text-align: center;">
+  ${section === 'Drink' ? 'Quench your thirst with our handpicked beverages – from refreshing juices to rich and flavorful coffees.' :
+  section === 'Breakfast' ? 'Start your day right with our hearty breakfast options made from the freshest ingredients.' :
+  'Light and tasty bites to spark your appetite – perfect to share or savor on your own.'}
+</p>`;
+          filtered.forEach(item => {
+            menuList.innerHTML += `
+              <div class="menu-item">
+                <div class="menu-details">
+                  <div class="menu-name">🍽️ <span title="Tap to learn more!">${item.name}</span></div>
+                  
+                  <div class="menu-price">₹${item.price}</div>
+                  <button class="order-btn" onclick="orderNow('${item.name}')">Order</button>
+                </div>
+                <img class="menu-image" src="${item.image}" alt="${item.name}" title="Calories: ${item.name === 'Coffee' ? '2 kcal' : item.name === 'Pancakes' ? '350 kcal' : item.name === 'Milkshake' ? '200 kcal' : item.name === 'Samosa' ? '250 kcal' : 'Approx. 150 kcal'}
+Tap image for more info!">
+              </div>
+            `;
+          });
+        }
+      });
+    }
+
+    function orderNow(itemName) {
+      alert(`Thanks for ordering ${itemName}! Your order will be on your table when you visit.`);
+    }
+
+    function applyFilter() {
+      const sortBy = document.getElementById('sortSelect').value;
+      const category = document.getElementById('categorySelect').value;
+      let filteredItems = [...menuItems];
+      if (category !== 'All') {
+        filteredItems = filteredItems.filter(item => item.category === category);
+      }
+      if (sortBy === 'priceHigh') filteredItems.sort((a, b) => b.price - a.price);
+      else if (sortBy === 'priceLow') filteredItems.sort((a, b) => a.price - b.price);
+      else if (sortBy === 'az') filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+      else if (sortBy === 'za') filteredItems.sort((a, b) => b.name.localeCompare(a.name));
+      renderMenu(filteredItems);
+    }
+
+    renderMenu(menuItems);
+  function closeModal() {
+    const modal = document.getElementById('nutritionModal');
+    modal.style.opacity = '0';
+    modal.style.transform = 'translate(-50%,-50%) scale(0.8)';
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+    }, 300);
+  }
+</script>
+<div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index:999;"></div>
+<div id="nutritionModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.8); background:#2a2a2a; color:white; padding:25px 20px 20px; border-radius:16px; box-shadow:0 8px 30px rgba(255,255,255,0.3); z-index:1001; text-align:center; max-width:320px; transition: all 0.3s ease; opacity: 0;">
+  <button onclick="closeModal()" style="position:absolute; top:10px; right:12px; background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">&times;</button>
+  <h3 id="modalItemName"></h3>
+  <p id="modalItemInfo">Nutrition info loading...</p>
+  <button onclick="const modal = document.getElementById('nutritionModal');
+      modal.style.opacity = '0';
+      modal.style.transform = 'translate(-50%,-50%) scale(0.8)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+      }, 300)" style="margin-top:10px; padding:6px 12px; border:none; background:#ffd700; color:#000; border-radius:5px; cursor:pointer;">Close</button>
+</div>
+<script>
+  const nutritionFacts = {
+    'Coffee': `☕ Calories: 2 kcal
+🍼 Protein: 0.3g
+🌮 Fat: 0g
+🌿 Ingredients: Water, Coffee Beans
+⚠ Allergen Info: None`,
+    'Milkshake': `🍦 Calories: 200 kcal
+🍼 Protein: 6g
+🌮 Fat: 5g
+🍬 Sugar: 25g
+🌿 Ingredients: Milk, Ice Cream, Flavoring
+⚠ Allergen Info: Dairy`,
+    'Pancakes': `🥞 Calories: 350 kcal
+🍼 Protein: 8g
+🌮 Fat: 12g
+🥜 Carbs: 45g
+🌿 Ingredients: Flour, Eggs, Milk, Butter
+⚠ Allergen Info: Gluten, Dairy, Eggs`,
+    'Samosa': `🍲 Calories: 250 kcal
+🌮 Fat: 10g
+🥜 Carbs: 30g
+🌿 Ingredients: Potato, Peas, Spices, Flour
+⚠ Allergen Info: Gluten`,
+    'Tea': `☕ Calories: 5 kcal
+🥜 Carbs: 1g
+🌮 Fat: 0g
+🌿 Ingredients: Water, Tea Leaves
+⚠ Allergen Info: None`,
+    'Orange Juice': `🍊 Calories: 110 kcal
+💪 Vitamin C: 100% DV
+🌿 Ingredients: Fresh Oranges
+⚠ Allergen Info: None`,
+    'Cold Brew': `☕ Calories: 15 kcal
+⚡ Caffeine: High
+🌿 Ingredients: Cold Brew Coffee, Water
+⚠ Allergen Info: None`,
+    'Green Tea': `🌿 Calories: 0 kcal
+🌿 Antioxidants: High
+🌿 Ingredients: Green Tea Leaves, Water
+⚠ Allergen Info: None`
+   };
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('menu-image')) {
+      const itemName = e.target.alt;
+      document.getElementById('modalItemName').textContent = itemName;
+      document.getElementById('modalItemInfo').textContent = nutritionFacts[itemName] || 'Nutrition details coming soon!';
+      const modal = document.getElementById('nutritionModal');
+      document.getElementById('modalOverlay').style.display = 'block';
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.style.transform = 'translate(-50%,-50%) scale(1)';
+      }, 10);
+    }
+  });
+</script>
+<div id="orderListPanel" style="display:none; position:fixed; top:100px; right:20px; background:#fff; color:#000; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.3); width:300px; max-height:400px; overflow:auto; z-index:2000;">
+  <h3 style="margin-top:0;">🛍️ Your Orders</h3>
+  <ul id="orderList" style="list-style:none; padding:0;"></ul>
+  <p id="totalAmount" style="font-weight:bold;">Total: ₹0</p>
+  <button onclick="clearOrders()" style="background:#d1411e; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; margin-right:10px;">Clear All</button>
+<button onclick="finalizeOrder()" style="background:#28a745; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">OK</button>
+
+</div>
+<script>
+  let orders = JSON.parse(localStorage.getItem('orderList') || '[]');
+
+  function saveOrders() {
+    localStorage.setItem('orderList', JSON.stringify(orders));
+  }
+
+  function toggleOrderList() {
+    const panel = document.getElementById('orderListPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    renderOrders();
+  }
+
+  function orderNow(itemName) {
+    const item = menuItems.find(i => i.name === itemName);
+    const existing = orders.find(o => o.name === itemName);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      orders.push({ ...item, quantity: 1 });
+    }
+    alert(`Thanks for ordering ${itemName}! It has been added to your order list.`);
+    saveOrders();
+    renderOrders();
+  }
+
+  function increaseQuantity(index) {
+    orders[index].quantity += 1;
+    saveOrders();
+    renderOrders();
+  }
+
+  function decreaseQuantity(index) {
+    orders[index].quantity -= 1;
+    if (orders[index].quantity <= 0) {
+      orders.splice(index, 1);
+    }
+    saveOrders();
+    renderOrders();
+  }
+
+  function removeOrder(index) {
+    orders.splice(index, 1);
+    saveOrders();
+    renderOrders();
+  }
+
+  function renderOrders() {
+    const list = document.getElementById('orderList');
+    const total = document.getElementById('totalAmount');
+    list.innerHTML = '';
+    let totalPrice = 0;
+    orders.forEach((item, index) => {
+      const subtotal = item.price * item.quantity;
+      totalPrice += subtotal;
+      list.innerHTML += `
+        <li style='margin-bottom:10px;'>
+          ${item.name} - ₹${item.price} x ${item.quantity} = ₹${subtotal}
+         <div style="margin-top: 5px; display: flex; gap: 5px; align-items: center;"> 
+            <button onclick="decreaseQuantity(${index})" style="background-color: #f0f0f0; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: background 0.3s;">−</button> 
+            <button onclick="increaseQuantity(${index})" style="background-color: #f0f0f0; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: background 0.3s;">+</button> 
+            <button onclick="removeOrder(${index})" style="background: #ccc; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">CUT</button> 
+          </div>
+
+
+        </li>`;
+    });
+    total.textContent = `Total: ₹${totalPrice}`;
+  }
+
+  function clearOrders() {
+    orders = [];
+    saveOrders();
+    renderOrders();
+  }
+  function finalizeOrder() {
+  if (orders.length === 0) {
+    alert("No items in the order to confirm.");
+    return;
+  }
+
+  const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const orderData = {
+    items: orders,
+    total: total,
+    timestamp: new Date().toISOString()
+  };
+
+  localStorage.setItem("finalOrder", JSON.stringify(orderData));
+
+  alert("Your order is noted!");
+
+  // Redirect to table.html
+  window.location.href = "table.html";
+}
+
+</script>
+
+<div class="footer-bottom">
+
+  <p class="copyright" style="text-align:center;">
+    &copy; 2025 GD's. All Rights Reserved | Crafted by <a href="https://gaurav-dixit35.github.io/GD/" target="_blank" class="link">Gaurav Dixit</a>
+  </p>
+
+</div>
+
+
+</body>
+</html>

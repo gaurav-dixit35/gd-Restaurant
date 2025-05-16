@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rate Us</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('assets/images/rate2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+    }
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 10px;
+      background-color: rgba(209, 65, 30, 0.95);
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      background: white;
+      color: #d1411e;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .back-btn:hover {
+      background-color: #ffe1d6;
+    }
+    .rating-container {
+      margin-top: 80px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      backdrop-filter: blur(8px);
+    }
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .star {
+      font-size: 40px;
+      cursor: pointer;
+      color: #ffffff;
+      transition: transform 0.3s ease, color 0.3s ease;
+      filter: drop-shadow(0 0 4px #fff);
+    }
+    .star.selected {
+      color: gold;
+      animation: glow 1s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px gold; }
+      to { text-shadow: 0 0 20px gold, 0 0 30px orange; }
+    }
+    .rate-btn {
+      padding: 10px 20px;
+      background: #ffd700;
+      color: black;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .rate-btn:hover {
+      background: #ffc107;
+    }
+    #msg {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #ffd700;
+    }
+    .effect-container {
+      position: fixed;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .effect {
+      position: absolute;
+      font-size: 24px;
+      animation: fall 4s linear forwards;
+      opacity: 0.8;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn">← Back</a>
+    <h3>✨ Rate Us ✨</h3>
+  </header>
+
+ <div class="rating-container">
+  <p style="font-size: 22px;">How was your experience?</p>
+  <div class="stars" id="stars">
+    <span class="star" data-value="1">⭐</span>
+    <span class="star" data-value="2">⭐</span>
+    <span class="star" data-value="3">⭐</span>
+    <span class="star" data-value="4">⭐</span>
+    <span class="star" data-value="5">⭐</span>
+  </div>
+  
+  <!-- Feedback message box added here -->
+ <!-- Feedback message box (initially hidden) -->
+<textarea id="feedback" rows="4" placeholder="Leave your feedback here..." 
+  style="width: 100%;  background-color: #f4af1c; padding: 10px; border-radius: 10px; resize: none; margin-bottom: 15px; display: none;">
+</textarea>
+
+  
+  <button class="rate-btn" onclick="submitRating()">Rate</button>
+  <div id="msg"></div>
+</div>
+
+
+  <div class="effect-container" id="effectContainer"></div>
+
+  <script>
+    let selectedRating = 0;
+    const stars = document.querySelectorAll('.star');
+
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedRating = +star.getAttribute('data-value');
+        updateStars(selectedRating);
+      });
+    });
+
+    function updateStars(rating) {
+  stars.forEach(star => {
+    const value = +star.getAttribute('data-value');
+    star.classList.toggle('selected', value <= rating);
+  });
+
+  // Show the feedback textarea
+  document.getElementById('feedback').style.display = 'block';
+}
+
+
+    function submitRating() {
+      if (!selectedRating) return alert("Please select a rating!");
+
+      const feedback = document.getElementById('feedback').value;
+      console.log("Feedback:", feedback); // For now, it just logs to console
+
+      document.getElementById('msg').textContent = "🌟 Thank you for your Rating!❤️";
+      triggerEffect(selectedRating);
+    }
+
+
+    function triggerEffect(rating) {
+      const container = document.getElementById('effectContainer');
+      container.innerHTML = '';
+
+      let symbols = [];
+      if (rating === 3) symbols = ['🎉'];
+      else if (rating === 4) symbols = ['❤️'];
+      else if (rating === 5) symbols = ['⭐', '🎉', '❤️'];
+
+      const interval = setInterval(() => {
+        for (let i = 0; i < 8; i++) {
+          const el = document.createElement('div');
+          el.className = 'effect';
+          el.style.left = Math.random() * 100 + 'vw';
+          el.style.top = Math.random() * -100 + 'px';
+          el.style.fontSize = (20 + Math.random() * 20) + 'px';
+          el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+          container.appendChild(el);
+        }
+      }, 150);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        setTimeout(() => container.innerHTML = '', 3000);
+      }, 4000);
+    }
+  </script>
+
+<div class="footer-bottom">
+
+  <p class="copyright" style="text-align:center;">
+    &copy; 2025 GD's. All Rights Reserved | Crafted by <a href="https://gaurav-dixit35.github.io/GD/" target="_blank" class="link">Gaurav Dixit</a>
+  </p>
+
+</div>
+
+
+</body>
+</html>

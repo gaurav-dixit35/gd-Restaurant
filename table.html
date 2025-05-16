@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Table</title>
+ <style>
+  @keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sparkle {
+  0%, 100% { box-shadow: 0 0 10px #ffd700; }
+  50% { box-shadow: 0 0 20px #ff9900; }
+}
+.btn:hover {
+  animation: sparkle 0.6s ease-in-out;
+}
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('assets/images/about-banner.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+  }
+  #main-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.777);
+    border-radius: 20px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(209, 65, 30, 0.95);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  h1, h2, h3 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
+  .btn {
+    padding: 10px 20px;
+    background: #f9f9f9;
+    color: rgb(240, 57, 7);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    background: #ffb702;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #ffb199;
+  }
+  .btn-secondary {
+    background-color: hsl(38, 61%, 73%);;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.95);
+    margin-top: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    color: black;
+  }
+  th, td {
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  th {
+    background:hsl(38, 61%, 73%);;
+    color: #000;
+  }
+  .note, .offline-msg p, #noOrdersMessage {
+    font-size: 1rem;
+    color: #fffae6;
+    font-style: italic;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .payment-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .offline-msg {
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .total-container {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  #spinner {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ffd700;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+</head>
+<body>
+<div id="spinner"><div class="spinner"></div></div>
+
+<header>
+  <a href="index.html" class="btn">← Back</a>
+  <h1 >Your Table</h1>
+  <a href="menu2.html" class="btn">View Menu</a>
+</header>
+ <div id="main-container">
+  <!-- everything else goes here -->
+<section id="reservation">
+<h1 style="text-decoration: underline;">Table Reservation Summary</h1>
+  <div id="reservation-details" style="text-align:center;"></div>
+</section>
+
+<section id="orders" style="text-align:center;">
+  <h2 style="text-decoration: underline;"> Your Orders</h2>
+  <div id="order-container">
+    <p id="noOrdersMessage" style="display:none;">You have no recent orders.</p>
+    <table id="orderTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="water">
+  <h3 style="text-align:center;text-decoration: underline;"> Add Water Bottles</h3>
+  <div class="controls">
+    <button id="minus-water" class="btn">−</button>
+    <span id="water-count">0</span> x ₹205 + 18% GST
+    <button id="plus-water" class="btn">+</button>
+  </div>
+</section>
+
+<section id="total" class="total-container">
+  <h3 style="text-decoration: underline;"> Order Total</h3>
+  <div id="total-details"></div>
+</section>
+
+<section class="payment-section" style="text-align:center;">
+  <p class="note">Note: Pay 30% non-refundable advance to reserve your table.</p>
+  <div class="payment-buttons">
+    <button id="online-payment" class="btn">Online Payment</button>
+    <button id="offline-payment" class="btn btn-secondary">Offline Payment</button>
+  </div>
+  <div id="offline-msg" class="offline-msg">
+    <p id="offline-text"></p>
+    <button id="proceed-pay" class="btn">Proceed to Pay</button>
+    <button id="cancel-pay" class="btn btn-secondary">Cancel</button>
+  </div>
+</section>
+
+<section class="contact" style="text-align:center;">
+  <h3 style="text-decoration: underline;">Contact Us</h3>
+  <p>Mobile no.= +91 9876543210</p>
+  <p>Gmail= guravtemp18@gmail.com</p>
+  <p>Note: Your table is kept for 15 minutes after reservation time. We appreciate you being on time.</p>
+</section>
+
+<section style="text-align:center;">
+  <button id="cancel" class="btn" style="background:hsl(38, 61%, 73%);;">Cancel Reservation</button>
+</section>
+
+<script>
+  const GST_RATE = 0.18;
+  const waterPrice = 205;
+  let waterCount = 0;
+  let baseTotal = 0;
+  let grandTotal = 0;
+
+  function getReservationDetails() {
+    const data = JSON.parse(localStorage.getItem("reservation"));
+    if (!data) return;
+    const resDiv = document.getElementById("reservation-details");
+    resDiv.innerHTML = `
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Number of Persons:</strong> ${data.persons}</p>
+      <p><strong>Date:</strong> ${data.date}</p>
+      <p><strong>Time:</strong> ${data.time}</p>
+    `;
+  }
+
+  function renderFinalOrder() {
+    const order = JSON.parse(localStorage.getItem("finalOrder"));
+    const table = document.getElementById("orderTable");
+    const tbody = table.querySelector("tbody");
+    const noMsg = document.getElementById("noOrdersMessage");
+
+    if (!order || !order.items || order.items.length === 0) {
+      noMsg.style.display = "block";
+      table.style.display = "none";
+      return;
+    }
+
+    let total = 0;
+    tbody.innerHTML = "";
+
+    order.items.forEach(item => {
+      const row = document.createElement("tr");
+      const subtotal = item.price * item.quantity;
+      total += subtotal;
+      row.innerHTML = `
+        <td>${item.name}</td>
+        <td>${item.category}</td>
+        <td>₹${item.price}</td>
+        <td>${item.quantity}</td>
+        <td>₹${subtotal}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    baseTotal = total;
+    table.style.display = "table";
+    updateTotal();
+  }
+
+  function updateTotal() {
+  const totalDiv = document.getElementById("total-details");
+  const waterCost = waterCount * waterPrice;
+  const foodGST = Math.round(baseTotal * GST_RATE);
+  const waterGST = Math.round(waterCost * GST_RATE);
+  grandTotal = baseTotal + foodGST + waterCost + waterGST;
+
+  let html = `<div class="total-line">Total Price = Rs. ${baseTotal} + 18% GST (Rs. ${foodGST})</div>`;
+  if (waterCount > 0) {
+    html += `<div class="total-line">${waterCount} Water Bottle(s) = Rs. ${waterCost} + 18% GST (Rs. ${waterGST})</div>`;
+  }
+  html += `<div class="total-line"><strong>Grand Total = Rs. ${grandTotal}</strong></div>`;
+  totalDiv.innerHTML = html;
+
+  // Save grand total to localStorage
+  localStorage.setItem("grandTotal", grandTotal);
+
+  return grandTotal;
+}
+
+
+  document.getElementById("plus-water").onclick = () => {
+    waterCount++;
+    document.getElementById("water-count").textContent = waterCount;
+    updateTotal();
+  };
+
+  document.getElementById("minus-water").onclick = () => {
+    if (waterCount > 0) {
+      waterCount--;
+      document.getElementById("water-count").textContent = waterCount;
+      updateTotal();
+    }
+  };
+
+  document.getElementById("online-payment").onclick = () => {
+    window.location.href = "payment.html";
+  };
+
+  document.getElementById("offline-payment").onclick = () => {
+    const offlineBox = document.getElementById("offline-msg");
+    const text = document.getElementById("offline-text");
+    const advance = Math.round(grandTotal * 0.3);
+    text.innerText = `You have to pay 30% of Rs. ${grandTotal} = Rs. ${advance} to reserve your seat.`;
+    offlineBox.style.display = "block";
+  };
+
+  document.getElementById("cancel-pay").onclick = () => {
+    document.getElementById("offline-msg").style.display = "none";
+  };
+
+  document.getElementById("proceed-pay").onclick = () => {
+    window.location.href = "rpayment.html";
+  };
+
+  document.getElementById("cancel").onclick = () => {
+    localStorage.removeItem("reservation");
+    localStorage.removeItem("finalOrder");
+    document.body.innerHTML = `
+  <div style="text-align:center; padding: 100px; font-size: 1.5rem; color: white; animation: fadeIn 1s ease-in-out;">
+    🎉 Reservation cancelled successfully.<br>We hope to see you again!
+  </div>
+`;
+
+  };
+
+  window.addEventListener("load", () => {
+    const spinner = document.getElementById("spinner");
+    if (spinner) spinner.style.display = "none";
+    getReservationDetails();
+    renderFinalOrder();
+  });
+</script>
+</div>
+<div class="footer-bottom">
+
+  <p class="copyright" style="text-align:center;">
+    &copy; 2025 GD's. All Rights Reserved | Crafted by <a href="https://gaurav-dixit35.github.io/GD/" target="_blank" class="link">Gaurav Dixit</a>
+  </p>
+
+</div>
+
+</body>
+</html>

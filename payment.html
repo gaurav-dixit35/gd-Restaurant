@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+   body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('assets/images/pay3.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: rgb(255, 255, 255);
+}
+
+@keyframes sparkle {
+  0%, 100% { box-shadow: 0 0 10px #ffd700; }
+  50% { box-shadow: 0 0 20px #ff9900; }
+}
+
+    header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #d1411ef2;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin: 20px auto 0;
+  max-width: 900px;
+}
+
+    header h2 {
+      margin: 0;
+    }
+   .btn {
+  padding: 10px 20px;
+  background: #f9f9f9;
+  color: rgb(240, 57, 7);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.btn:hover {
+  background: #ffb702;
+  transform: scale(1.05);
+  animation: sparkle 0.6s ease-in-out;
+}
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #020202d8;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-group input.invalid {
+      border-color: red;
+    }
+    .error-msg {
+      color: red;
+      font-size: 13px;
+      display: none;
+    }
+    .payment-methods {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-bottom: 15px;
+    }
+    .payment-methods button {
+      flex: 0 0 auto;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .payment-methods button.active {
+      background: #3498db;
+      color: #fff;
+      border-color: #2980b9;
+    }
+    .logo-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .logo-options label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      gap: 8px;
+    }
+    .logo-options img {
+      width: 32px;
+      height: auto;
+    }
+    .section-hidden {
+      display: none;
+    }
+    #amountDisplay {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    #payBtn {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #payBtn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .history-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 300px;
+      height: 100%;
+      background: #020202c7;
+      border-left: 2px solid #ccc;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      padding: 20px;
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    .history-panel.open {
+      transform: translateX(0);
+    }
+    .history-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="btn" onclick="location.href='table.html'">← Back</button>
+    <h2>Payment</h2>
+    <button class="btn" onclick="toggleHistory()">History</button>
+  </header>
+
+  <div class="container">
+    <div class="form-group">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName">
+      <div class="error-msg" id="nameError">Name must contain only letters.</div>
+    </div>
+    <div class="form-group">
+      <label for="mobile">Mobile (+CountryCodeXXXXXXXXXX)</label>
+      <input type="text" id="mobile">
+      <div class="error-msg" id="mobileError">Enter valid mobile number.</div>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email">
+      <div class="error-msg" id="emailError">Enter valid email.</div>
+    </div>
+
+    <div class="payment-methods">
+      <button id="cardBtn" onclick="selectMethod('card')">Card</button>
+      <button id="upiBtn" onclick="selectMethod('upi')">UPI</button>
+    </div>
+
+    <div id="cardSection" class="section-hidden">
+      <div class="form-group">
+        <label>Card Type</label>
+        <div class="logo-options">
+          <label><input type="radio" name="cardType" value="Visa"><img src="https://img.icons8.com/color/48/visa.png">Visa</label>
+          <label><input type="radio" name="cardType" value="Mastercard"><img src="https://img.icons8.com/color/48/mastercard.png">Mastercard</label>
+          <label><input type="radio" name="cardType" value="Rupay"><img src="https://img.icons8.com/color/48/rupay.png">Rupay</label>
+          <label><input type="radio" name="cardType" value="AmEx"><img src="https://img.icons8.com/color/48/amex.png">AmEx</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456">
+        <div class="error-msg" id="cardNumberError">Enter valid card number.</div>
+      </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="password" id="cvv" maxlength="3" placeholder="123">
+        <div class="error-msg" id="cvvError">Enter valid CVV.</div>
+      </div>
+    </div>
+
+    <div id="upiSection" class="section-hidden">
+      <div class="form-group">
+        <label>UPI App</label>
+        <div class="logo-options">
+            <label><input type="radio" name="upiMethod" value="GPay">
+                <img src="https://img.icons8.com/color/48/google-pay.png">GPay</label>
+
+            <label><input type="radio" name="upiMethod" value="Paytm">
+                <img src="https://img.icons8.com/color/48/paytm.png">Paytm</label>
+
+            <label><input type="radio" name="upiMethod" value="AmazonPay">
+                <img src="https://img.icons8.com/color/48/amazon.png">AmazonPay</label>
+
+            <label><input type="radio" name="upiMethod" value="BHIM">
+                <img src="https://img.icons8.com/color/48/bhim.png">BHIM</label>
+
+            <label><input type="radio" name="upiMethod" value="PayPal">
+                <img src="https://img.icons8.com/ios-filled/50/0088cc/paypal.png" alt="PayPal">PayPal</label>
+            <label>
+                <input type="radio" name="upiMethod" value="PhonePe">
+                <img src="assets/images/phonepe.jpg" alt="PhonePe" style="height:32px;">PhonePe
+            </label>    
+        </div>
+
+      </div>
+    </div>
+
+    <div id="amountDisplay">Total Amount to Pay: Rs. <span id="amount">0</span></div>
+    <button id="payBtn" disabled onclick="submitPayment()">Pay</button>
+  </div>
+
+  <div id="historyPanel" class="history-panel">
+    <h3>Payment History</h3>
+    <div id="historyList"></div>
+    <div class="history-actions">
+      <button class="btn" onclick="clearHistory()">Clear History</button>
+      <button class="btn" onclick="toggleHistory()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const nameInput = document.getElementById('fullName');
+    const mobileInput = document.getElementById('mobile');
+    const emailInput = document.getElementById('email');
+    const cardNumber = document.getElementById('cardNumber');
+    const cvv = document.getElementById('cvv');
+    const payBtn = document.getElementById('payBtn');
+    const amount = localStorage.getItem('grandTotal') || 0;
+    document.getElementById('amount').innerText = amount;
+    nameInput.value = localStorage.getItem('userName') || '';
+
+    function toggleHistory() {
+      const panel = document.getElementById('historyPanel');
+      panel.classList.toggle('open');
+      const history = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+      const list = document.getElementById('historyList');
+      list.innerHTML = '';
+      history.forEach(h => {
+        list.innerHTML += `<p><strong>${h.name}</strong> paid Rs. ${h.amount} via ${h.method} (${h.detail}) on ${h.time}</p>`;
+      });
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('paymentHistory');
+      toggleHistory();
+    }
+
+    function selectMethod(method) {
+      document.getElementById('cardBtn').classList.toggle('active', method === 'card');
+      document.getElementById('upiBtn').classList.toggle('active', method === 'upi');
+      document.getElementById('cardSection').classList.toggle('section-hidden', method !== 'card');
+      document.getElementById('upiSection').classList.toggle('section-hidden', method !== 'upi');
+      validateForm();
+    }
+
+    function validateForm() {
+      const nameValid = /^[A-Za-z ]+$/.test(nameInput.value.trim());
+      const mobileValid = /^\+\d{1,4}\d{10}$/.test(mobileInput.value.trim());
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+      const method = document.querySelector('.payment-methods button.active')?.textContent;
+
+      const cardValid = method === 'Card' ?
+        /^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber.value) && /^\d{3}$/.test(cvv.value) && document.querySelector('input[name="cardType"]:checked') : true;
+
+      const upiValid = method === 'UPI' ? document.querySelector('input[name="upiMethod"]:checked') : true;
+
+      document.getElementById('nameError').style.display = nameValid ? 'none' : 'block';
+      document.getElementById('mobileError').style.display = mobileValid ? 'none' : 'block';
+      document.getElementById('emailError').style.display = emailValid ? 'none' : 'block';
+      document.getElementById('cardNumberError').style.display = method === 'Card' && !/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber.value) ? 'block' : 'none';
+      document.getElementById('cvvError').style.display = method === 'Card' && !/^\d{3}$/.test(cvv.value) ? 'block' : 'none';
+
+      payBtn.disabled = !(nameValid && mobileValid && emailValid && cardValid && upiValid);
+    }
+
+    document.querySelectorAll('input').forEach(input => input.addEventListener('input', validateForm));
+    document.querySelectorAll('input[type=radio]').forEach(input => input.addEventListener('change', validateForm));
+
+    function submitPayment() {
+      const method = document.querySelector('.payment-methods button.active').textContent;
+      const detail = method === 'Card'
+        ? document.querySelector('input[name="cardType"]:checked')?.value
+        : document.querySelector('input[name="upiMethod"]:checked')?.value;
+
+      const record = {
+        name: nameInput.value,
+        email: emailInput.value,
+        method,
+        detail,
+        amount,
+        time: new Date().toLocaleString()
+      };
+
+      const history = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+      history.push(record);
+      localStorage.setItem('paymentHistory', JSON.stringify(history));
+      alert(`Thank you! The amount you paid is Rs. ${amount}. Your seat is reserved.`);
+      location.reload();
+    }
+  </script>
+  <div class="footer-bottom">
+
+    <p class="copyright" style="text-align:center;">
+    &copy; 2025 GD's. All Rights Reserved | Crafted by <a href="https://gaurav-dixit35.github.io/GD/" target="_blank" class="link">Gaurav Dixit</a>
+    </p>
+
+  </div>
+</body>
+</html>
