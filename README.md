@@ -35,6 +35,7 @@ Welcome to **GD's Restaurant**, a premium digital experience for food lovers! Wh
 | `table.html`   | Table booking with item summary and GST calc     |
 | `payment.html` | Final billing and payment form                   |
 | `rpayment.html`| Pre-reservation payment with method options      |
+| `chef.html`      | Discover our master chefs – the artists behind every dish |
 | `rate.html`    | Feedback form with animated star ratings         |
 
 ---
