@@ -7,29 +7,68 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
 
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      animation: fadeInUp 0.5s ease-in-out;
-      backdrop-filter: blur(6px);
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+/* Responsive visibility */
+.mobile-only {
+  display: none;
+}
+.desktop-only {
+  display: inline-block;
+}
 
-    .menu-image {
-      max-width: 120px;
-      max-height: 120px;
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      border-radius: 10px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+/* Hamburger Icon (Mobile Only) */
+.hamburger {
+  position: absolute;
+  right: 20px;
+  background: white;
+  color: #d1411e;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Mobile dropdown with stacked buttons */
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.mobile-menu a,
+.mobile-menu button {
+  margin: 5px 0;
+  background: #fff;
+  color: #d1411e;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mobile-menu.hidden {
+  display: none;
+}
+
+/* Media query to toggle visibility */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  .mobile-only {
+    display: inline-block;
+  }
+}
+
       body {
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -62,6 +101,30 @@
     .back-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 0 15px rgb(255, 255, 1);
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      animation: fadeInUp 0.5s ease-in-out;
+      backdrop-filter: blur(6px);
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .menu-image {
+      max-width: 120px;
+      max-height: 120px;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .menu-container {
       display: flex;
@@ -157,11 +220,21 @@
   </style>
 </head>
 <body>
-  <header>
-  <a href="index.html" class="back-btn">← Back</a>
+ <header>
+  <a href="index.html" class="back-btn desktop-only">← Back</a>
   <h1 style="margin: 0 auto;">GD's Restaurant</h1>
-  <button onclick="toggleOrderList()" style="position:absolute; right:20px; background:#fff; color:#d1411e; padding:8px 16px; border-radius:20px; border:none; font-weight:bold; cursor:pointer; ">🍽️ Orders</button>
+  <button onclick="toggleOrderList()" class="order-btn desktop-only">🍽️ Orders</button>
+
+  <!-- Hamburger icon for mobile only -->
+  <button class="hamburger mobile-only" onclick="toggleMobileMenu()">☰</button>
+
+  <!-- Mobile menu: initially hidden -->
+  <div id="mobileMenu" class="mobile-menu hidden">
+    <a href="index.html" class="back-btn">← Back</a>
+    <button onclick="toggleOrderList()" class="order-btn">🍽️ Orders</button>
+  </div>
 </header>
+
 
 <div class="menu-container">
     <div class="menu-list" id="menu-list">
@@ -476,6 +549,10 @@ Tap image for more info!">
 
   // Redirect to table.html
   window.location.href = "table.html";
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('hidden');
 }
 
 </script>
