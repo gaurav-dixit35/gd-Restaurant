@@ -50,7 +50,7 @@ Welcome to **GD's Restaurant**, a premium digital experience for food lovers! Wh
 
 ---
 
-## 🤝 Contribute, Collaborate & 
+## 🤝 Contribute, Collaborate & Improve
 
 ### Found a bug? Have an idea? Want to work together?
 
